@@ -6,8 +6,7 @@ import pyttsx3
 model = torch.hub.load('ultralytics/yolov5', 'yolov5s', trust_repo=True)
 
 # Lista de objetos escolares comuns no dataset COCO
-objetos_escolares = {"backpack", "book", "pen", "pencil", "scissors"}
-
+objetos_escolares = {"backpack", "book", "scissors", "clock", "bottle", "cup", "laptop", "cell phone", "suitcase"}
 # Inicializar mecanismo de texto para fala
 engine = pyttsx3.init()
 

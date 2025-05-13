@@ -9,7 +9,7 @@ from tkinter import messagebox
 model = torch.hub.load('ultralytics/yolov5', 'yolov5s', trust_repo=True)
 
 # Lista de objetos escolares esperados
-objetos_esperados = {"backpack", "book", "scissors"}
+objetos_esperados = {"backpack", "book", "scissors", "clock", "bottle", "cup", "laptop", "cell phone", "suitcase"}
 
 # Inicializar TTS
 engine = pyttsx3.init()
@@ -76,7 +76,7 @@ def detectar_objetos(status_label):
             for item in detectados:
                 falar(item if idioma_atual == "en" else f"{traduzir(item)}")
 
-        if faltando:
+        if faltando: # tirar isso aqui 
             for item in faltando:
                 mensagem = f"{item} is missing" if idioma_atual == "en" else f"Faltando {traduzir(item)}"
                 falar(mensagem)
@@ -92,7 +92,13 @@ def traduzir(objeto):
     traducoes = {
         "backpack": "mochila",
         "book": "livro",
-        "scissors": "tesoura"
+        "scissors": "tesoura", 
+        "clock": "relógio",
+        "bottle": "garrafa",
+        "cup": "copo", 
+        "laptop": "notebook",
+        "cell phone": "celular",
+        "toothbrush": "caneta"
     }
     return traducoes.get(objeto, objeto)
 
