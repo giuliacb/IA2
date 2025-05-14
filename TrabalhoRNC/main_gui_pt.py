@@ -14,26 +14,12 @@ objetos_esperados = {"backpack", "book", "scissors", "clock", "bottle", "cup", "
 # Inicializar TTS
 engine = pyttsx3.init()
 
-# Idioma atual (por padrão: inglês)
-idioma_atual = "en"
-
-def definir_idioma(lang_code):
-    global idioma_atual
-    idioma_atual = lang_code
+# Definir voz em português
+def definir_voz_portugues():
     for voz in engine.getProperty('voices'):
-        # Algumas vozes podem não ter 'languages', evitamos erro
-        if hasattr(voz, "languages") and voz.languages:
-            try:
-                if lang_code in voz.languages[0].decode():
-                    engine.setProperty('voice', voz.id)
-                    break
-            except Exception:
-                continue
-        # Alternativa: checar o nome da voz (fallback)
-        elif lang_code in voz.id.lower():
+        if 'pt' in voz.id.lower() or 'brazil' in voz.id.lower():
             engine.setProperty('voice', voz.id)
             break
-
 
 def falar(texto):
     engine.say(texto)
@@ -72,14 +58,13 @@ def detectar_objetos(status_label):
         cv2.imshow("Objetos Escolares", anotado)
 
         if detectados:
-            status_label.config(text="Detectados: " + ", ".join(detectados))
             for item in detectados:
-                falar(item if idioma_atual == "en" else f"{traduzir(item)}")
+                falar(traduzir(item))
 
-        if faltando: # tirar isso aqui 
-            for item in faltando:
-                mensagem = f"{item} is missing" if idioma_atual == "en" else f"Faltando {traduzir(item)}"
-                falar(mensagem)
+        status_msg = "Detectados: " + ", ".join([traduzir(o) for o in detectados])
+        if faltando:
+            status_msg += "\nFaltando: " + ", ".join([traduzir(o) for o in faltando])
+        status_label.config(text=status_msg)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
@@ -98,7 +83,7 @@ def traduzir(objeto):
         "cup": "copo", 
         "laptop": "notebook",
         "cell phone": "celular",
-        "toothbrush": "caneta"
+        "suitcase": "mochila/mala"  # pode ajustar conforme necessário
     }
     return traducoes.get(objeto, objeto)
 
@@ -112,17 +97,8 @@ def parar():
     global executando
     executando = False
 
-def alternar_idioma(status_label):
-    global idioma_atual
-    if idioma_atual == "en":
-        definir_idioma("pt")
-        status_label.config(text="Idioma definido: Português")
-    else:
-        definir_idioma("en")
-        status_label.config(text="Language set: English")
-
 def criar_interface():
-    definir_idioma("en")  # padrão
+    definir_voz_portugues()
 
     janela = tk.Tk()
     janela.title("🎒 Identificador de Objetos Escolares")
@@ -132,19 +108,15 @@ def criar_interface():
     titulo = tk.Label(janela, text="Identificador de Objetos Escolares", font=("Arial", 14, "bold"))
     titulo.pack(pady=10)
 
-    status = tk.Label(janela, text="Clique em 'Iniciar Detecção' para começar.", fg="blue")
+    status = tk.Label(janela, text="Clique em 'Iniciar Detecção' para começar.", fg="blue", justify="left", wraplength=400)
     status.pack(pady=5)
 
-    objetos_txt = tk.Label(janela, text=f"Esperados: {', '.join(objetos_esperados)}", fg="black")
+    objetos_txt = tk.Label(janela, text=f"Esperados: {', '.join([traduzir(o) for o in objetos_esperados])}", fg="black")
     objetos_txt.pack()
 
     btn_iniciar = tk.Button(janela, text="Iniciar Detecção", bg="green", fg="white", font=("Arial", 12),
                             command=lambda: iniciar(status))
     btn_iniciar.pack(pady=5)
-
-    btn_idioma = tk.Button(janela, text="Alternar Idioma (PT/EN)", bg="gray", fg="white", font=("Arial", 12),
-                           command=lambda: alternar_idioma(status))
-    btn_idioma.pack(pady=5)
 
     btn_parar = tk.Button(janela, text="Sair", bg="red", fg="white", font=("Arial", 12),
                           command=lambda: (parar(), janela.destroy()))
