@@ -101,10 +101,6 @@ Além da versão por terminal, o projeto inclui uma **interface gráfica amigáv
 
 ---
 
-Perfeito, Giulia! Aqui está o trecho pronto para adicionar ao seu `README.md` com a nova seção **“Teste com Imagens Estáticas”**:
-
----
-
 ## 🖼️ Teste com Imagens Estáticas
 
 Além da detecção ao vivo com webcam, você pode testar o modelo com **imagens salvas no computador**, útil para:
